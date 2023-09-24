@@ -13,14 +13,16 @@ import {
 import { getDatabase, set, ref } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD277phVJIr1bPTqu0KgDdMj1wmsCGGdr0",
-  authDomain: "table-ce3d8.firebaseapp.com",
-  projectId: "table-ce3d8",
-  storageBucket: "table-ce3d8.appspot.com",
-  messagingSenderId: "992779164548",
-  appId: "1:992779164548:web:5ec1456b330ab04c029bd1",
-  databaseURL: "https://table-ce3d8-default-rtdb.firebaseio.com",
+  apiKey: "AIzaSyCXh7z1BMwE3ilu_4K4jsz-eag0c4jGQLY",
+  authDomain: "bharat-one-care-8d8bf.firebaseapp.com",
+  projectId: "bharat-one-care-8d8bf",
+  storageBucket: "bharat-one-care-8d8bf.appspot.com",
+  messagingSenderId: "618523547605",
+  appId: "1:618523547605:web:a608764e8eed1af0a48f5c",
+  measurementId: "G-XJKFQT1WQZ",
+  databaseURL: "https://bharat-one-care-8d8bf-default-rtdb.firebaseio.com",
 };
+
 
 const firebaseApp = initializeApp(firebaseConfig);
 export const app = firebaseApp
