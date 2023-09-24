@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
-import "./AddEdit.css";
-// import fireDb from "../firebase";
-import { app } from "../firebase";
-import { getDatabase, ref, set, child, get } from "firebase/database";
-import { toast } from "react-toastify";
-import { nanoid } from "nanoid";
+import { app } from "../context/Firebase";
+import { getDatabase, ref, set, child, get } from 'firebase/database';
+import { toast } from 'react-toastify';
+import { nanoid } from 'nanoid';
+import Header from '../components/Header';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import '../css/AddEdit.css';
 
 //RealTime - Database Connection
 const db = getDatabase(app);
 const dbRef = ref(db);
+
+var uid = "";
+const auth = getAuth();
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        uid = user.uid;
+    } else {
+    }
+});
 
 
 const initialState = {
@@ -21,29 +31,25 @@ const initialState = {
 }
 
 
-
-
-
 function AddEdit() {
     const [state, setState] = useState(initialState);
     const [data, setData] = useState({});
-
     const { name, email, age, gender, city } = state;
 
-    //check here
     const navigate = useNavigate();
 
-    const { id } = useParams();
+    const { uuid, id } = useParams();
+
     useEffect(() => {
-        get(child(dbRef, 'contacts')).then((snapshot) => {
+        get(child(dbRef, `content/${uid}`)).then((snapshot) => {
             if (snapshot.exists()) {
                 setData({ ...snapshot.val() });
             } else {
-                console.log("No data available");
+                //console.log("No data available");
                 setData({});
             }
         }).catch((error) => {
-            console.error(error);
+            //console.error(error);
         });
 
 
@@ -74,20 +80,15 @@ function AddEdit() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // set(ref(db, 'contacts/nehal'),{
-        //     id: 1,
-        //     name: "Piyush",
-        //     age: 21,
-        //   });
-
         console.log("Data Saved");
         if (!name || !email || !age || !gender || !city) {
             toast.error("Please provide value in each input field")
         }
         else {
+            console.log(id);
             if (!id) {
                 const newid = nanoid();
-                set(ref(db, `contacts/${newid}`), {
+                set(ref(db, `content/${uid}/${newid}`), {
                     name: name,
                     email: email,
                     age: age,
@@ -100,8 +101,8 @@ function AddEdit() {
                     toast.error(error);
                 });
             } else {
-                
-                set(ref(db, `contacts/${id}`), {
+
+                set(ref(db, `content/${uid}/${id}`), {
                     name: name,
                     email: email,
                     age: age,
@@ -122,28 +123,31 @@ function AddEdit() {
 
 
     return (
-        <div style={{ marginTop: "100px" }}>
-            <form action="" style={{ margin: "auto", padding: "15px", maxWidth: "400px", alignContent: "center" }} onSubmit={handleSubmit}>
-                <label htmlFor="name">Name</label>
-                <input type="text" id='name' name='name' placeholder='Your Name' value={name || ""} onChange={handleInputChange} />
+        <>
+            <Header></Header>
+            <div style={{ marginTop: "100px" }}>
+                <form action="" style={{ margin: "auto", padding: "15px", maxWidth: "400px", alignContent: "center" }} onSubmit={handleSubmit}>
+                    <label htmlFor="name">Name</label>
+                    <input type="text" id='name' name='name' placeholder='Your Name' value={name || ""} onChange={handleInputChange} />
 
-                <label htmlFor="email">Email</label>
-                <input type="email" id='email' name='email' placeholder='xyz@gmail.com' value={email || ""} onChange={handleInputChange} />
+                    <label htmlFor="email">Email</label>
+                    <input type="email" id='email' name='email' placeholder='xyz@gmail.com' value={email || ""} onChange={handleInputChange} />
 
-                <label htmlFor="age">Age</label>
-                <input type='number' id='age' name='age' placeholder='Enter Your Age' value={age || ""} onChange={handleInputChange} />
+                    <label htmlFor="age">Age</label>
+                    <input type='number' id='age' name='age' placeholder='Enter Your Age' value={age || ""} onChange={handleInputChange} />
 
-                {/* Use Radio Button Here */}
-                <label htmlFor="gender">Gender</label>
-                <input type='text' id='gender' name='gender' placeholder='Enter Your Gender' value={gender || ""} onChange={handleInputChange} />
+                    {/* Use Radio Button Here/Future Work */}
+                    <label htmlFor="gender">Gender</label>
+                    <input type='text' id='gender' name='gender' placeholder='Enter Your Gender' value={gender || ""} onChange={handleInputChange} />
 
-                {/* Use Select-Option here */}
-                <label htmlFor="city">City</label>
-                <input type='text' id='city' name='city' placeholder='Enter Your City' value={city || ""} onChange={handleInputChange} />
+                    {/* Use Select-Option here/Future Work */}
+                    <label htmlFor="city">City</label>
+                    <input type='text' id='city' name='city' placeholder='Enter Your City' value={city || ""} onChange={handleInputChange} />
 
-                <input type="Submit" value={id ? "Update" : "Save"} />
-            </form>
-        </div>
+                    <input type="Submit" value={id ? "Update" : "Save"} />
+                </form>
+            </div>
+        </>
     )
 }
 

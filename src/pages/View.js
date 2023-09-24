@@ -1,20 +1,33 @@
-import React, { useState, useEffect } from 'react'
-import { getDatabase, ref, onValue, child, get, set } from "firebase/database";
-import {app} from "../firebase.js"
-import { useNavigate, useParams, Link } from 'react-router-dom';
-import "./View.css"
+import React, { useState, useEffect } from 'react';
+import { getDatabase, ref, child, get } from 'firebase/database';
+import { app } from '../context/Firebase';
+import { useParams, Link } from 'react-router-dom';
+import Header from '../components/Header.jsx';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import '../css/View.css';
 
+//RealTime - Database Connection
 const db = getDatabase(app);
 const dbRef = ref(db);
+
+let uid = "";
+const auth = getAuth();
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        uid = user.uid;
+    } else {
+    }
+});
+
 
 function View() {
 
     const [user, setUser] = useState({});
 
-    const { id } = useParams();
+    const { uuid, id } = useParams();
 
     useEffect(() => {
-        get(child(dbRef, 'contacts/' + id)).then((snapshot) => {
+        get(child(dbRef, `content/${uid}/` + id)).then((snapshot) => {
             if (snapshot.exists()) {
                 setUser({ ...snapshot.val() })
             } else {
@@ -28,43 +41,48 @@ function View() {
     console.log("user", user);
 
     return (
-        <div style={{ marginTop: "150px" }}>
-            <div className="card">
-                <div className="card-header">
-                    <p>User Contact Detail</p>
-                </div>
-                <div className="container">
-                    <strong>ID:</strong>
-                    <span>{id}</span>
-                    <br />
-                    <br />
-                    <strong>Name:</strong>
-                    <span>{user.name}</span>
-                    <br />
-                    <br />
-                    <strong>Email:</strong>
-                    <span>{user.email}</span>
-                    <br />
-                    <br />
-                    <strong>Age:</strong>
-                    <span>{user.age}</span>
-                    <br />
-                    <br />
-                    <strong>Gender:</strong>
-                    <span>{user.gender}</span>
-                    <br />
-                    <br />
-                    <strong>City:</strong>
-                    <span>{user.city}</span>
-                    <br />
-                    <br />
-                    <Link to="/">
-                        <button className='btn btn-edit'>Go Back</button>
-                    </Link>
+        <>
+            <Header></Header>
+            <div style={{ marginTop: "150px" }}>
+                <div className="card">
+                    <div className="card-header">
+                        <p>User Contact Detail</p>
+                    </div>
+                    <div className="container">
+                        <table className='table-view'>
+                            <tr className='row-view'>
+                                <td className='strong'><strong>ID:</strong></td>
+                                <td className='data'>{id}</td>
+                            </tr>
+                            <tr>
+                                <td className='strong'><strong>Name:</strong></td>
+                                <td className='data'>{user.name}</td>
+                            </tr>
+                            <tr>
+                                <td className='strong'> <strong>Email:</strong></td>
+                                <td className='data'>{user.email}</td>
+                            </tr>
+                            <tr>
+                                <td className='strong'><strong>Age:</strong></td>
+                                <td className='data'>{user.age}</td>
+                            </tr>
+                            <tr>
+                                <td className='strong'><strong>Gender:</strong></td>
+                                <td className='data'>{user.gender}</td>
+                            </tr>
+                            <tr>
+                                <td className='strong'><strong>City:</strong></td>
+                                <td className='data'>{user.city}</td>
+                            </tr>
+                        </table>
+                        <Link to="/">
+                            <button className='btn btn-edit'>Go Back</button>
+                        </Link>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 
-export default View
+export default View;

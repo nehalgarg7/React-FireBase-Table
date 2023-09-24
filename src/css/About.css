@@ -1,0 +1,24 @@
+.user-details {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.user-details table {
+  border: 1px solid black;
+}
+
+.user-details table thead {
+  background-color: rgb(74, 255, 255);
+}
+
+.user-details table tr {
+  margin: 4px;
+}
+
+.user-details table td {
+  padding: 10px;
+  border: 1px solid black;
+}
